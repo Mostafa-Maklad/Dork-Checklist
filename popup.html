@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recon Dork Checklist</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app">
+  <!-- HEADER -->
+  <div class="header">
+    <h1>🔍 RECON DORK CHECKLIST</h1>
+    <div class="hdr-acts">
+      <button class="btn btn-ic btn-sm" id="btn-history" title="Search History">🕐</button>
+      <button class="btn btn-ic btn-sm" id="btn-export" title="Export">📤</button>
+      <button class="btn btn-ic btn-sm" id="btn-import" title="Import">📥</button>
+      <button class="btn btn-ic btn-sm" id="btn-theme" title="Toggle Theme">🌙</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row" id="stats-row"></div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <input class="domain-in" id="domain-in" type="text" placeholder="🎯 target domain (e.g. example.com)" autocomplete="off" spellcheck="false" style="flex:1">
+    <select class="gb-sel" id="gb-sel"></select>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-bar">
+    <div class="filter-wrap">
+      <span class="fi-icon">🔎</span>
+      <input class="filter-in" id="filter-in" placeholder="Filter dorks...">
+    </div>
+    <div class="pf-btns">
+      <button class="pf ph" data-pf="high">HIGH</button>
+      <button class="pf pm" data-pf="med">MED</button>
+      <button class="pf pl" data-pf="low">LOW</button>
+    </div>
+    <button class="btn btn-sm" id="btn-add-cat">📂</button>
+    <button class="btn btn-sm btn-t" id="btn-add-dork">➕</button>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+
+  <!-- SCROLLABLE BODY -->
+  <div class="scroll-body" id="cats-container"></div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span class="prog-txt" id="prog-txt">0/0 (0%)</span>
+    <div style="display:flex;gap:4px">
+      <button class="btn btn-sm" id="btn-collapse">⊟ Collapse</button>
+      <button class="btn btn-sm" id="btn-reset">🔄 Reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD DORK MODAL -->
+<div class="overlay hidden" id="modal-dork">
+  <div class="modal">
+    <div class="m-hdr"><span class="m-title">➕ Add Dork</span><button class="btn btn-ic" id="x-dork">✕</button></div>
+    <div class="m-body">
+      <div class="fg"><label class="fg-l">Dork Name *</label><input class="form-in" id="nd-name" placeholder="e.g. Exposed API endpoints" autocomplete="off"></div>
+      <div class="fg"><label class="fg-l">Search Query *</label><textarea class="form-ta" id="nd-query" placeholder='site:{target} inurl:"/api/" | inurl:"/v1/"'></textarea><div class="hint">💡 Use {target} as domain placeholder</div></div>
+      <div class="fg"><label class="fg-l">Category</label><select class="form-in" id="nd-cat" style="padding:5px 10px"></select></div>
+      <div class="fg"><label class="fg-l">Priority</label>
+        <div class="psel">
+          <div class="po high" data-p="high">🔴 HIGH</div>
+          <div class="po med on" data-p="med">🟠 MED</div>
+          <div class="po low" data-p="low">🟢 LOW</div>
+        </div>
+      </div>
+      <div class="fg"><label class="fg-l">Notes (optional)</label><textarea class="form-ta" id="nd-notes" placeholder="Tips or context..."></textarea></div>
+    </div>
+    <div class="m-foot"><button class="btn" id="cn-dork">Cancel</button><button class="btn btn-t" id="sv-dork">💾 Save</button></div>
+  </div>
+</div>
+
+<!-- ADD CATEGORY MODAL -->
+<div class="overlay hidden" id="modal-cat">
+  <div class="modal">
+    <div class="m-hdr"><span class="m-title">📂 New Category</span><button class="btn btn-ic" id="x-cat">✕</button></div>
+    <div class="m-body">
+      <div class="fg"><label class="fg-l">Name *</label><input class="form-in" id="nc-name" placeholder="e.g. IoT Devices" autocomplete="off"></div>
+      <div class="fg"><label class="fg-l">Emoji</label><input class="form-in" id="nc-emoji" placeholder="🔧" maxlength="4" style="width:64px"></div>
+      <div class="fg"><label class="fg-l">Description / Tip</label><textarea class="form-ta" id="nc-tip" placeholder="Tips for this category..."></textarea></div>
+      <div class="fg"><label class="fg-l">Default Engines</label><div class="eng-chk-row" id="nc-engines"></div></div>
+    </div>
+    <div class="m-foot"><button class="btn" id="cn-cat">Cancel</button><button class="btn btn-p" id="sv-cat">💾 Save</button></div>
+  </div>
+</div>
+
+<!-- EXPORT / IMPORT -->
+<div class="overlay hidden" id="modal-exp">
+  <div class="modal">
+    <div class="m-hdr"><span class="m-title" id="exp-title">📤 Export</span><button class="btn btn-ic" id="x-exp">✕</button></div>
+    <div class="m-body">
+      <div id="exp-sec"><p style="font-size:11px;color:var(--text2);margin-bottom:8px">Copy JSON to backup your data:</p><textarea class="ex-ta" id="exp-ta" readonly></textarea></div>
+      <div id="imp-sec" class="hidden"><p style="font-size:11px;color:var(--text2);margin-bottom:8px">Paste JSON to restore:</p><textarea class="ex-ta" id="imp-ta" placeholder='{"version":"2.0",...}'></textarea><p class="hint" style="margin-top:6px">⚠️ Will merge — new custom items added, progress updated.</p></div>
+    </div>
+    <div class="m-foot"><button class="btn" id="cn-exp">Close</button><button class="btn btn-t" id="do-exp">📋 Copy</button></div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="overlay hidden" id="modal-hist">
+  <div class="modal">
+    <div class="m-hdr"><span class="m-title">🕐 History</span><button class="btn btn-ic" id="x-hist">✕</button></div>
+    <div class="m-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:11px;color:var(--text2)">Recent searches</span>
+        <button class="btn btn-sm btn-d" id="clr-hist">🗑️ Clear</button>
+      </div>
+      <div id="hist-list"></div>
+    </div>
+    <div class="m-foot"><button class="btn" id="cn-hist">Close</button></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<script src="popup.js"></script>
+</body>
+</html>
