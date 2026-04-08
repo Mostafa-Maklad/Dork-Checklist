@@ -9,6 +9,10 @@
 
 ---
 
+![HTML Version Screenshot](assets/HTML-version.png)
+
+---
+
 ## What is this?
 
 A search engine dorking checklist built for bug bounty hunters. It organizes 65+ Google dorks across 7 categories, tracks your progress, and opens searches directly in your preferred search engine — all without a backend or login.
@@ -44,6 +48,8 @@ A search engine dorking checklist built for bug bounty hunters. It organizes 65+
 ---
 
 ## Install: Browser Extension (Chrome / Edge / Brave)
+
+![Extension Screenshot](assets/Extention.png)
 
 ```bash
 # 1. Clone or download this repo
