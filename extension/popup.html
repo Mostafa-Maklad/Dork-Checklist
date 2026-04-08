@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Recon Dork Checklist</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app">
+
+  <div class="header">
+    <h1>🔍 RECON DORK CHECKLIST</h1>
+    <div class="hdr-acts">
+      <button class="btn btn-ic" id="btn-history" title="History">🕐</button>
+      <button class="btn btn-ic" id="btn-export"  title="Export">📤</button>
+      <button class="btn btn-ic" id="btn-import"  title="Import">📥</button>
+      <button class="btn btn-ic" id="btn-theme"   title="Theme">🌙</button>
+    </div>
+  </div>
+
+  <div class="stats-row" id="stats-row"></div>
+
+  <div class="controls">
+    <input id="domain-in" class="domain-in" type="text"
+           placeholder="🎯  target domain  (e.g. example.com)"
+           autocomplete="off" spellcheck="false">
+    <select id="gb-sel" class="gb-sel"></select>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-wrap">
+      <span class="fi-icon">🔎</span>
+      <input id="filter-in" class="filter-in" placeholder="Filter dorks...">
+    </div>
+    <div class="pf-btns">
+      <button class="pf ph" data-pf="high">HIGH</button>
+      <button class="pf pm" data-pf="med">MED</button>
+      <button class="pf pl" data-pf="low">LOW</button>
+    </div>
+    <button class="btn btn-sm"       id="btn-add-cat">📂 Cat</button>
+    <button class="btn btn-sm btn-t" id="btn-add-dork">➕ Dork</button>
+  </div>
+
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+
+  <div class="scroll-body" id="cats-container"></div>
+
+  <div class="footer">
+    <span class="prog-txt" id="prog-txt">0/0 (0%)</span>
+    <div style="display:flex;gap:4px">
+      <button class="btn btn-sm" id="btn-collapse">⊟ Collapse</button>
+      <button class="btn btn-sm" id="btn-reset">🔄 Reset</button>
+    </div>
+  </div>
+
+  <div class="gh-credit">
+    <a id="gh-link" href="#">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+      </svg>
+      Mostafa-Maklad
+    </a>
+  </div>
+
+</div>
+
+<!-- MODALS -->
+<div class="overlay hidden" id="modal-dork">
+  <div class="modal">
+    <div class="m-hdr"><span class="m-title">➕ Add Dork</span><button class="btn btn-ic" id="x-dork">✕</button></div>
+    <div class="m-body">
+      <div class="fg"><label class="fg-l">Dork Name *</label><input class="form-in" id="nd-name" placeholder="e.g. Exposed API endpoints" autocomplete="off"></div>
+      <div class="fg"><label class="fg-l">Search Query *</label><textarea class="form-ta" id="nd-query" placeholder="site:{target} inurl:&quot;/api/&quot;"></textarea><div class="hint">💡 Use {target} as domain placeholder</div></div>
+      <div class="fg"><label class="fg-l">Category</label><select class="form-in" id="nd-cat"></select></div>
+      <div class="fg"><label class="fg-l">Priority</label>
+        <div class="psel" id="psel-dork">
+          <div class="po high" data-p="high">🔴 HIGH</div>
+          <div class="po med on" data-p="med">🟠 MED</div>
+          <div class="po low" data-p="low">🟢 LOW</div>
+        </div>
+      </div>
+      <div class="fg"><label class="fg-l">Notes (optional)</label><textarea class="form-ta" id="nd-notes" placeholder="Tips..."></textarea></div>
+    </div>
+    <div class="m-foot"><button class="btn" id="cn-dork">Cancel</button><button class="btn btn-t" id="sv-dork">💾 Save</button></div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="modal-cat">
+  <div class="modal">
+    <div class="m-hdr"><span class="m-title">📂 New Category</span><button class="btn btn-ic" id="x-cat">✕</button></div>
+    <div class="m-body">
+      <div class="fg"><label class="fg-l">Name *</label><input class="form-in" id="nc-name" placeholder="e.g. IoT Devices" autocomplete="off"></div>
+      <div class="fg"><label class="fg-l">Emoji</label><input class="form-in" id="nc-emoji" placeholder="🔧" maxlength="4" style="width:60px"></div>
+      <div class="fg"><label class="fg-l">Tip / Description</label><textarea class="form-ta" id="nc-tip" placeholder="Tips..."></textarea></div>
+      <div class="fg"><label class="fg-l">Engines</label><div class="eng-chk-row" id="nc-engines"></div></div>
+    </div>
+    <div class="m-foot"><button class="btn" id="cn-cat">Cancel</button><button class="btn btn-p" id="sv-cat">💾 Save</button></div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="modal-exp">
+  <div class="modal">
+    <div class="m-hdr"><span class="m-title" id="exp-title">📤 Export</span><button class="btn btn-ic" id="x-exp">✕</button></div>
+    <div class="m-body">
+      <div id="exp-sec"><p class="hint" style="margin-bottom:8px">Copy JSON to backup your data:</p><textarea class="ex-ta" id="exp-ta" readonly></textarea></div>
+      <div id="imp-sec" class="hidden"><p class="hint" style="margin-bottom:8px">Paste exported JSON to restore:</p><textarea class="ex-ta" id="imp-ta" placeholder='{"version":"2.0",...}'></textarea><p class="hint" style="margin-top:6px">⚠️ Merges with existing data.</p></div>
+    </div>
+    <div class="m-foot"><button class="btn" id="cn-exp">Close</button><button class="btn btn-t" id="do-exp">📋 Copy</button></div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="modal-hist">
+  <div class="modal">
+    <div class="m-hdr"><span class="m-title">🕐 History</span><button class="btn btn-ic" id="x-hist">✕</button></div>
+    <div class="m-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:11px;color:var(--text2)">Recent searches</span>
+        <button class="btn btn-sm btn-d" id="clr-hist">🗑️ Clear All</button>
+      </div>
+      <div id="hist-list"></div>
+    </div>
+    <div class="m-foot"><button class="btn" id="cn-hist">Close</button></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+<script src="popup.js"></script>
+</body>
+</html>

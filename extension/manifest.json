@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Recon Dork Checklist",
+  "short_name": "DorkRecon",
+  "version": "2.0.0",
+  "description": "Search engine dorking checklist for bug bounty hunters. 65+ dorks across 7 categories. Supports Google, Bing, Yandex, DuckDuckGo, Shodan, GitHub & Censys.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Recon Dork Checklist"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
